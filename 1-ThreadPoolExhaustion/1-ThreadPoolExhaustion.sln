@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.6.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TargetApp", "TargetApp\TargetApp.csproj", "{23EAF9D4-6B01-4E20-8AB2-DEA786A7CDC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TargetApp", "TargetApp\TargetApp.csproj", "{23EAF9D4-6B01-4E20-8AB2-DEA786A7CDC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{817009AE-BC89-460A-9245-32023E1CD7BF}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,9 +18,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{23EAF9D4-6B01-4E20-8AB2-DEA786A7CDC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -30,5 +32,11 @@ Global
 		{23EAF9D4-6B01-4E20-8AB2-DEA786A7CDC6}.Release|x64.Build.0 = Release|Any CPU
 		{23EAF9D4-6B01-4E20-8AB2-DEA786A7CDC6}.Release|x86.ActiveCfg = Release|Any CPU
 		{23EAF9D4-6B01-4E20-8AB2-DEA786A7CDC6}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BDC308E9-090E-4932-B25F-9F60BFB3C7CA}
 	EndGlobalSection
 EndGlobal
