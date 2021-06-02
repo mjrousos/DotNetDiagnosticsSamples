@@ -1,0 +1,52 @@
+# To deploy:
+# -----
+#   kubectl create secret generic connection-strings --from-file=adventure-works=<File containing connection string>
+#   kubectl apply -f k8s.yaml
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scenario1
+  selfLink: /api/v1/namespaces/default/pods/scenario1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scenario1
+      component: webapi
+  template:
+    metadata:
+      labels:
+        app: scenario1
+        component: webapi
+    spec:
+      containers:
+        - name: testapp
+          image: mjrousos/diagnostics-scenario1:1.0
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: "1"
+          env:
+          - name: "ProductDatabaseSettings__ConnectionString"
+            valueFrom:
+              secretKeyRef:
+                name: connection-strings
+                key: adventure-works
+---
+  
+apiVersion: v1
+kind: Service
+metadata:
+  name: scenario1-gateway
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: scenario1
+    component: webapi
+  type: LoadBalancer
