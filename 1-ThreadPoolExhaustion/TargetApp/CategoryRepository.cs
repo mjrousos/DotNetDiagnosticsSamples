@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using TargetApp.Models;
 
 namespace TargetApp
@@ -28,10 +29,22 @@ namespace TargetApp
             return db.Query<ProductCategory>("SELECT ProductCategoryID Id, Name, ParentProductCategoryID ParentId FROM SalesLT.ProductCategory");
         }
 
-        public ProductCategory? GetCategory(int id)
+        public async Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync()
+        {
+            using var db = DbConnection;
+            return await db.QueryAsync<ProductCategory>("SELECT ProductCategoryID Id, Name, ParentProductCategoryID ParentId FROM SalesLT.ProductCategory");
+        }
+
+        public ProductCategory GetCategory(int id)
         {
             using var db = DbConnection;
             return db.QueryFirstOrDefault<ProductCategory>("SELECT ProductCategoryID Id, Name, ParentProductCategoryID ParentId FROM SalesLT.ProductCategory WHERE ProductCategoryID=@id", new { id });
+        }
+
+        public async Task<ProductCategory> GetCategoryAsync(int id)
+        {
+            using var db = DbConnection;
+            return await db.QueryFirstOrDefaultAsync<ProductCategory>("SELECT ProductCategoryID Id, Name, ParentProductCategoryID ParentId FROM SalesLT.ProductCategory WHERE ProductCategoryID=@id", new { id });
         }
     }
 }
