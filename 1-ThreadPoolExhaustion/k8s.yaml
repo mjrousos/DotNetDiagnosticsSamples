@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: testapp
-          image: mjrousos/diagnostics-scenario1:1.0
+          image: mjrousos/diagnostics-scenario1:1.6
           ports:
             - containerPort: 80
           resources:

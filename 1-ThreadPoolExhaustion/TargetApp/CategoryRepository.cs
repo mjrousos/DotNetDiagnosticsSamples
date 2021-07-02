@@ -26,12 +26,20 @@ namespace TargetApp
         public IEnumerable<ProductCategory> GetAllCategories()
         {
             using var db = DbConnection;
-            return db.Query<ProductCategory>("SELECT ProductCategoryID Id, Name, ParentProductCategoryID ParentId FROM SalesLT.ProductCategory");
+
+            // Because the DB query is quick, add a Task.Delay to simulate other slower tasks
+            Task.Delay(10).Wait();
+
+            return db.Query<ProductCategory>(@"SELECT ProductCategoryID Id, Name, ParentProductCategoryID ParentId FROM SalesLT.ProductCategory");
         }
 
         public async Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync()
         {
             using var db = DbConnection;
+
+            // Because the DB query is quick, add a Task.Delay to simulate other slower tasks
+            await Task.Delay(10);
+
             return await db.QueryAsync<ProductCategory>("SELECT ProductCategoryID Id, Name, ParentProductCategoryID ParentId FROM SalesLT.ProductCategory");
         }
 
