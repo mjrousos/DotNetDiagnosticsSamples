@@ -3,9 +3,6 @@ using System;
 
 namespace TargetApp
 {
-    /// <summary>
-    /// This is a badly implemented cache. Do not cache like this.
-    /// </summary>
     public class ProfilePictureCacheGood
     {
         private IMemoryCache _cache;
@@ -24,7 +21,7 @@ namespace TargetApp
                 // Limit the cache entry's lifetime by both size and timespan
                 var options = new MemoryCacheEntryOptions()
                     .SetSize(bytes.Length)
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(1));
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
 
                 _cache.Set(id, bytes, options);
             }
