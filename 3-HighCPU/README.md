@@ -1,0 +1,5 @@
+# High CPU usage
+
+This sample demonstrates performance problems with hot code paths with high CPU usage. CPU usage is normal, of course, and many apps will eventually be CPU-bound once other performance bottlenecks are addressed, but if apps are not meeting performance expectations and CPU usage is high, it can be valuable to profile the apps and understand where the CPU cycles are going and investigating whether there are alternative architectures that might be more efficient. In some cases, for example, it may be possible to cache results rather than recalculate them (so that memory usage increases while CPU usage decreases). In other cases, algorithmic optimizations may be possible.
+
+This sample includes two similar endpoints - one which calls a worker service that intentionally consumes CPU for a period of time and another that uses an async method call to represent offloading the work to an external service. The sample is a bit contrived since some amount of CPU pressure is unavoidable.
