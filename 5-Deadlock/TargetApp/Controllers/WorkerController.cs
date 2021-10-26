@@ -6,8 +6,8 @@ namespace TargetApp.Controllers;
 [Route("[controller]")]
 public class WorkerController : ControllerBase
 {
-    private static readonly SemaphoreSlim _s1 = new(1, 1);
-    private static readonly SemaphoreSlim _s2 = new(1, 1);
+    private static Account Account1 { get; set; } = new Account(100);
+    private static Account Account2 { get; set; } = new Account(100);
 
     private readonly ILogger<WorkerController> _logger;
 
@@ -16,52 +16,73 @@ public class WorkerController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("RunTask")]
-    public async Task<ActionResult<string>> RunTask()
+    [HttpPost("RunTaskFixed/{amount}")]
+    public async Task<ActionResult> RunTaskFixed(decimal amount)
     {
-        await _s1.WaitAsync();
+        await Task.WhenAll(
+            TransferFixed(Account1, Account2, amount),
+            TransferFixed(Account2, Account1, amount));
+
+        return Accepted();
+    }
+
+    [HttpPost("RunTask/{amount}")]
+    public async Task<ActionResult> RunTask(decimal amount)
+    {
+        await Task.WhenAll(
+            Transfer(Account1, Account2, amount),
+            Transfer(Account2, Account1, amount));
+
+        return Accepted();
+    }
+
+    private async Task Transfer(Account sourceAccount, Account destinationAccount, decimal amount)
+    {
+        await sourceAccount.SynchronizationSemaphore.WaitAsync();
+
         try
         {
-            var retPart1 = await HelperAsync();
-            await _s2.WaitAsync();
+            sourceAccount.Balance -= amount;
+            await destinationAccount.SynchronizationSemaphore.WaitAsync();
+
             try
             {
-
-                var retPart2 = "World";
-                return $"{retPart1} {retPart2}";
+                destinationAccount.Balance += amount;
             }
             finally
             {
-                _s2.Release();
+                destinationAccount.SynchronizationSemaphore.Release();
             }
         }
         finally
         {
-            _s1.Release();
+            sourceAccount.SynchronizationSemaphore.Release();
         }
     }
 
-    private static async Task<string> HelperAsync()
+    private async Task TransferFixed(Account sourceAccount, Account destinationAccount, decimal amount)
     {
-        string? ret;
-        await _s2.WaitAsync();
+        await sourceAccount.SynchronizationSemaphore.WaitAsync();
+
         try
         {
-            await _s1.WaitAsync();
-
-            try
-            {
-                ret = "Hello";
-                return ret;
-            }
-            finally
-            {
-                _s1.Release();
-            }
+            sourceAccount.Balance -= amount;
         }
         finally
         {
-            _s2.Release();
+            sourceAccount.SynchronizationSemaphore.Release();
         }
+
+        await destinationAccount.SynchronizationSemaphore.WaitAsync();
+
+        try
+        {
+            destinationAccount.Balance += amount;
+        }
+        finally
+        {
+            destinationAccount.SynchronizationSemaphore.Release();
+        }
+
     }
 }
