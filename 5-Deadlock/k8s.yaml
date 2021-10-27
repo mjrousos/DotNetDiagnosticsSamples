@@ -1,0 +1,80 @@
+# To deploy:
+# -----
+#   kubectl apply -f k8s.yaml
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scenario5
+  selfLink: /api/v1/namespaces/default/pods/scenario5
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scenario5
+      component: webapi
+  template:
+    metadata:
+      labels:
+        app: scenario5
+        component: webapi
+    spec:
+      volumes:
+      - name: diagnostics
+        emptyDir: {}
+      - name: dotnet-monitor-config
+        configMap:
+            name: dotnet-monitor-config
+      containers:
+        - name: testapp
+          image: mjrousos/diagnostics-scenario5:1.2
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /tmp
+              name: diagnostics
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: "1"
+        - name: sidecar
+          image: mcr.microsoft.com/dotnet/nightly/monitor:6.0.0-rc.1
+          ports:
+          - containerPort: 52323
+          args: ["--urls", "http://*:52323", "--no-auth"]
+          volumeMounts:
+            - name: diagnostics
+              mountPath: /tmp
+            - name: dotnet-monitor-config
+              mountPath: /etc/dotnet-monitor
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: "0.5"              
+---
+  
+apiVersion: v1
+kind: Service
+metadata:
+  name: scenario5-gateway
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: scenario5
+    component: webapi
+  type: LoadBalancer
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dotnet-monitor-config
+data:
+  Egress__AzureBlobStorage__DemoStorageProvider__accountUri: "https://diagnosticsdemostorage.blob.core.windows.net"
+  Egress__AzureBlobStorage__DemoStorageProvider__containerName: "dotnet-monitor"
+  Egress__AzureBlobStorage__DemoStorageProvider__blobPrefix: "artifacts"
+  Egress__AzureBlobStorage__DemoStorageProvider__accountKeyName: "DemoAccountKey"
+  Egress__Properties__DemoAccountKey: "<Redacted>"

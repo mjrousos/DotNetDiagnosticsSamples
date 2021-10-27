@@ -1,0 +1,15 @@
+{
+    "Egress": {
+        "AzureBlobStorage": {
+            "DemoStorageProvider": {
+                "accountUri": "https://diagnosticsdemostorage.blob.core.windows.net",
+                "containerName": "dotnet-monitor",
+                "blobPrefix": "artifacts",
+                "accountKeyName": "DemoAccountKey"
+            }
+        },
+        "Properties": {
+            "DemoAccountKey": "<Redacted>"
+        }
+    }
+}
