@@ -16,27 +16,27 @@ public class WorkerController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("RunTaskFixed/{amount}")]
-    public async Task<ActionResult> RunTaskFixed(decimal amount)
+    [HttpPost("RunTaskFixedAsync/{amount}")]
+    public async Task<ActionResult> RunTaskFixedAsync(decimal amount)
     {
         await Task.WhenAll(
-            TransferFixed(Account1, Account2, amount),
-            TransferFixed(Account2, Account1, amount));
+            TransferFixedAsync(Account1, Account2, amount),
+            TransferFixedAsync(Account2, Account1, amount));
 
         return Accepted();
     }
 
-    [HttpPost("RunTask/{amount}")]
-    public async Task<ActionResult> RunTask(decimal amount)
+    [HttpPost("RunTaskAsync/{amount}")]
+    public async Task<ActionResult> RunTaskAsync(decimal amount)
     {
         await Task.WhenAll(
-            Transfer(Account1, Account2, amount),
-            Transfer(Account2, Account1, amount));
+            TransferAsync(Account1, Account2, amount),
+            TransferAsync(Account2, Account1, amount));
 
         return Accepted();
     }
 
-    private async Task Transfer(Account sourceAccount, Account destinationAccount, decimal amount)
+    private async Task TransferAsync(Account sourceAccount, Account destinationAccount, decimal amount)
     {
         await sourceAccount.SynchronizationSemaphore.WaitAsync();
 
@@ -60,7 +60,7 @@ public class WorkerController : ControllerBase
         }
     }
 
-    private async Task TransferFixed(Account sourceAccount, Account destinationAccount, decimal amount)
+    private async Task TransferFixedAsync(Account sourceAccount, Account destinationAccount, decimal amount)
     {
         await sourceAccount.SynchronizationSemaphore.WaitAsync();
 
@@ -84,5 +84,51 @@ public class WorkerController : ControllerBase
             destinationAccount.SynchronizationSemaphore.Release();
         }
 
+    }
+
+    [HttpPost("RunTaskFixed/{amount}")]
+    public async Task<ActionResult> RunTaskFixed(decimal amount)
+    {
+        await Task.WhenAll(
+            Task.Run(() => TransferFixed(Account1, Account2, amount)),
+            Task.Run(() => TransferFixed(Account2, Account1, amount)));
+
+        return Accepted();
+    }
+
+    [HttpPost("RunTask/{amount}")]
+    public async Task<ActionResult> RunTask(decimal amount)
+    {
+        await Task.WhenAll(
+            Task.Run(() => Transfer(Account1, Account2, amount)),
+            Task.Run(() => Transfer(Account2, Account1, amount)));
+
+        return Accepted();
+    }
+
+    private void Transfer(Account sourceAccount, Account destinationAccount, decimal amount)
+    {
+        lock(sourceAccount)
+        {
+            sourceAccount.Balance -= amount;
+
+            lock(destinationAccount)
+            {
+                destinationAccount.Balance += amount;
+            }
+        }
+    }
+
+    private void TransferFixed(Account sourceAccount, Account destinationAccount, decimal amount)
+    {
+        lock (sourceAccount)
+        {
+            sourceAccount.Balance -= amount;
+        }
+
+        lock (destinationAccount)
+        {
+            destinationAccount.Balance += amount;
+        }
     }
 }
