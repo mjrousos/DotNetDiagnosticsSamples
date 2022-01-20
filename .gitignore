@@ -3,3 +3,4 @@ obj/
 .vs/
 launchSettings.json
 *.user
+packages/
