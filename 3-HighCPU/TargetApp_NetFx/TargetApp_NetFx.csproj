@@ -162,19 +162,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\WorkerController.cs" />
     <Compile Include="Controllers\WorkerFixedController.cs" />
+    <Compile Include="Controllers\WorkerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Modules\ApplicationModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Managed\ProfilePictureCacheBad.cs" />
-    <Compile Include="Services\Managed\ProfilePictureCacheGood.cs" />
-    <Compile Include="Services\Managed\ProfilePictureService.cs" />
-    <Compile Include="Services\Native\NativeProfilePictureBad.cs" />
-    <Compile Include="Services\Native\NativeProfilePictureGood.cs" />
-    <Compile Include="Services\Native\NativeProfilePictureService.cs" />
+    <Compile Include="Services\BadWorker.cs" />
+    <Compile Include="Services\GoodWorker.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
