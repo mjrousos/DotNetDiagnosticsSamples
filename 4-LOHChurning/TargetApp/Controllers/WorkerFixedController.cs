@@ -34,6 +34,8 @@ namespace TargetApp.Controllers
                 using var pictureBytes = _profilePictureService.LookupProfilePicture(id);
                 if (pictureBytes != null)
                 {
+                    // Commented out so that the CPU usage of the hashing doesn't make
+                    // expected GC-related issues harder to spot.
                     //var hashBytes = _hashAlgorithm.ComputeHash(pictureBytes.Bytes);
                     //ret.Add(Convert.ToBase64String(hashBytes));
                 }
